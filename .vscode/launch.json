@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "GDB : SampleTest",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/SampleTest",
+            "cwd": "${workspaceFolder}",
+            "miDebuggerPath": "gdb",
+            "args": [
+            ],
+            "environment": [
+                {
+                    "name": "GTEST_COLOR",
+                    "value": "0"
+                }
+            ]
+        }
+    ]
+}
