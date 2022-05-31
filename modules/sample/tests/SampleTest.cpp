@@ -15,4 +15,5 @@ TEST(SampleTest, caWriteString){
     for(int i = 0; i < val; i++){
         EXPECT_EQ(str[i], srcString[i]);
     }
+    EXPECT_EQ(str[val], '\0');
 }
