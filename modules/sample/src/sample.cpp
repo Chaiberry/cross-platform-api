@@ -8,5 +8,5 @@ int caAdd(int m, int n)
 
 int caWriteString(char* buffer, size_t buffer_size, const char* string)
 {
-    return snprintf(buffer, buffer_size, string);
+    return snprintf(buffer, buffer_size, "%s", string);
 }
