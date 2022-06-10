@@ -75,6 +75,9 @@ enable_testing()
 # Compilation flag
 include(CompilerFlags)
 
+# Test utils
+include(TestUtils)
+
 # Include directories
 include_directories(${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(modules)
