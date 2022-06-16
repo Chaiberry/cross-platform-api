@@ -32,4 +32,4 @@
 *.app
 
 build/*
-generated_docs/*
+generated-docs/*
