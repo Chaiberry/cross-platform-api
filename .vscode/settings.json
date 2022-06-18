@@ -1,6 +1,6 @@
 {
     "cmake.configureArgs": [
            "-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake",
-           "-DOPTIONB=ON"
+           "-DBUILD_PYTHON=ON"
        ],
 }

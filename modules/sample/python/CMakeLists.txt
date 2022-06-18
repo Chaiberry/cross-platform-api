@@ -1,3 +1,6 @@
+if (NOT BUILD_PYTHON)
+  return()
+endif()
 
 set_property(SOURCE Sample.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE Sample.i PROPERTY SWIG_MODULE_NAME pySample)
