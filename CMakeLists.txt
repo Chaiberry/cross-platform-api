@@ -85,5 +85,9 @@ include(TestUtils)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(modules)
 
+# package
+add_subdirectory(package)
+
 # tests
 # add_subdirectory(tests)
+
