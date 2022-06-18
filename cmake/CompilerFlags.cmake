@@ -8,12 +8,5 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(CMAKE_CXX_FLAGS)
 endif()
-
-if (EMSCRIPTEN)
-  message(STATUS "Building with Emscripten")
-endif()
-
-if (APPLE)
-  include(XCodeFlags)
-Endif()

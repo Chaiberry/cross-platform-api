@@ -66,6 +66,9 @@ option(BUILD_TESTING "Build tests" ON)
 
 PrintProjectSettings()
 
+include(Python)
+include(Swig)
+
 # Enable testing
 enable_testing()
 
