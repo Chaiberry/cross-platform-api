@@ -76,3 +76,16 @@ function(search_python_internal_module)
     message(FATAL_ERROR "Can't find python internal module \"${MODULE_NAME}\", please install it using your system package manager.")
   endif()
 endfunction()
+
+search_python_module(NAME virtualenv PACKAGE virtualenv)
+# venv not working on github windows runners
+# search_python_internal_module(NAME venv)
+# Testing using a vitual environment
+set(VENV_EXECUTABLE ${Python3_EXECUTABLE} -m virtualenv)
+#set(VENV_EXECUTABLE ${Python3_EXECUTABLE} -m venv)
+set(VENV_DIR ${CMAKE_CURRENT_BINARY_DIR}/python/venv)
+if(WIN32)
+  set(VENV_Python3_EXECUTABLE ${VENV_DIR}/Scripts/python.exe)
+else()
+  set(VENV_Python3_EXECUTABLE ${VENV_DIR}/bin/python)
+endif()

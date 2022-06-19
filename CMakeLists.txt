@@ -89,5 +89,5 @@ add_subdirectory(modules)
 add_subdirectory(package)
 
 # tests
-# add_subdirectory(tests)
+add_subdirectory(tests)
 

@@ -54,4 +54,18 @@ add_custom_command(
 # Main Target
 add_custom_target(python_package ALL
   DEPENDS ${PROJECT_BINARY_DIR}/python/dist/timestamp
-  WORKING_DIRECTORY python)
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/python)
+
+# make a virtualenv to install our python package in it
+add_custom_command(TARGET python_package POST_BUILD
+  # Clean previous install otherwise pip install may do nothing
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${VENV_DIR}
+  COMMAND ${VENV_EXECUTABLE} -p ${Python3_EXECUTABLE} ${VENV_DIR}
+  #COMMAND ${VENV_EXECUTABLE} ${VENV_DIR}
+  # Must NOT call it in a folder containing the setup.py otherwise pip call it
+  # (i.e. "python setup.py bdist") while we want to consume the wheel package
+  COMMAND ${VENV_Python3_EXECUTABLE} -m pip install --find-links=${CMAKE_BINARY_DIR}/python/dist ${PYTHON_PROJECT}
+  BYPRODUCTS ${VENV_DIR}
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/python
+  COMMENT "Create venv and install ${PYTHON_PROJECT}"
+  VERBATIM)
