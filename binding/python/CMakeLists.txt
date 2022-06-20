@@ -1,7 +1,23 @@
 #######################
+## Set Swig flag      #
+#######################
+
+set(CMAKE_SWIG_FLAGS)
+
+if(${SWIG_VERSION} VERSION_GREATER_EQUAL 4)
+  list(APPEND CMAKE_SWIG_FLAGS "-doxygen")
+endif()
+
+# Python related settings for SWIG
+list(APPEND CMAKE_SWIG_FLAGS "-py3" "-DPY3")
+
+#######################
 ## Python sub modules #
 #######################
 set(PYTHON_SUB_MODULES Sample)
+
+# build sub modules
+add_subdirectory(src)
 
 #######################
 ## Python Packaging  ##
@@ -15,7 +31,7 @@ endforeach()
 # setup.py.in contains cmake variable e.g. @PYTHON_PROJECT@ and
 # generator expression e.g. $<TARGET_FILE_NAME:pySample>
 configure_file(
-  ${PROJECT_SOURCE_DIR}/package/python/setup.py.in
+  ${PROJECT_SOURCE_DIR}/binding/python/setup.py.in
   ${PROJECT_BINARY_DIR}/python/setup.py.in
   @ONLY)
 
@@ -69,3 +85,5 @@ add_custom_command(TARGET python_package POST_BUILD
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/python
   COMMENT "Create venv and install ${PYTHON_PROJECT}"
   VERBATIM)
+
+add_subdirectory(tests)

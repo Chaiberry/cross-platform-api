@@ -1,7 +1,3 @@
-if (NOT BUILD_PYTHON)
-  return()
-endif()
-
 set_property(SOURCE Sample.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE Sample.i PROPERTY SWIG_MODULE_NAME pySample)
 
@@ -15,7 +11,7 @@ add_library(${PROJECT_NAMESPACE}::pySample ALIAS pySample)
 
 target_include_directories(pySample
   PRIVATE 
-  ../include
+  ${PROJECT_SOURCE_DIR}/modules/Sample/include
   ${Python3_INCLUDE_DIRS}
   )
 

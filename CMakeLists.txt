@@ -66,8 +66,17 @@ option(BUILD_TESTING "Build tests" ON)
 
 PrintProjectSettings()
 
-include(Python)
-include(Swig)
+if(BUILD_PYTHON)
+  include(Python)
+endif()
+
+if(BUILD_DOTNET)
+  include(Dotnet)
+endif()
+
+if(BUILD_JAVA)
+  include(Java)
+endif()
 
 # Enable testing
 enable_testing()
@@ -78,16 +87,9 @@ enable_testing()
 # Compilation flag
 include(CompilerFlags)
 
-# Test utils
-include(TestUtils)
-
 # Include directories
-include_directories(${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(modules)
 
 # package
-add_subdirectory(package)
-
-# tests
-add_subdirectory(tests)
+add_subdirectory(binding)
 
