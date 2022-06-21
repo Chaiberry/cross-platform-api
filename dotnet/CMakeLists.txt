@@ -1,8 +1,3 @@
-# Will need swig
-set(CMAKE_SWIG_FLAGS)
-find_package(SWIG REQUIRED)
-include(UseSWIG)
-
 # Find dotnet cli
 find_program(DOTNET_EXECUTABLE NAMES dotnet)
 if(NOT DOTNET_EXECUTABLE)
@@ -54,11 +49,10 @@ endif()
 
 list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
 
-# Swig wrap all libraries
-foreach(SUBPROJECT IN ITEMS Sample)
-  add_subdirectory(${SUBPROJECT})
-  target_link_libraries(${NATIVE_LIBRARY_NAME} PRIVATE dotnet_${SUBPROJECT})
-endforeach()
+#######################
+## Dotnet sub modules #
+#######################
+add_subdirectory(src)
 
 file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION ${PROJECT_BINARY_DIR}/dotnet)
 set(DOTNET_LOGO_DIR "${PROJECT_BINARY_DIR}/dotnet")
@@ -69,9 +63,6 @@ file(MAKE_DIRECTORY ${DOTNET_PACKAGES_DIR})
 ############################
 ##  .Net Runtime Package  ##
 ############################
-# *.csproj.in contains:
-# CMake variable(s) (@PROJECT_NAME@) that configure_file() can manage and
-# generator expression ($<TARGET_FILE:...>) that file(GENERATE) can manage.
 configure_file(
   ${PROJECT_SOURCE_DIR}/dotnet/template.runtime.csproj.in
   ${DOTNET_NATIVE_PROJECT_DIR}/${DOTNET_NATIVE_PROJECT}.csproj.in
@@ -146,7 +137,7 @@ function(add_dotnet_test FILE_NAME)
   get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
   get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
 
-  set(DOTNET_TEST_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${TEST_NAME})
+  set(DOTNET_TEST_DIR ${PROJECT_BINARY_DIR}/dotnet/tests-gen/${COMPONENT_NAME}/${TEST_NAME})
   message(STATUS "build path: ${DOTNET_TEST_DIR}")
 
   configure_file(
@@ -183,67 +174,15 @@ function(add_dotnet_test FILE_NAME)
       ${DOTNET_TEST_DIR}/timestamp
     WORKING_DIRECTORY ${DOTNET_TEST_DIR})
 
-  if(BUILD_TESTING)
-    add_test(
-      NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}
-      COMMAND ${DOTNET_EXECUTABLE} test --no-build -c $<CONFIG>
-      WORKING_DIRECTORY ${DOTNET_TEST_DIR})
-  endif()
+  add_test(
+    NAME dotnet_${COMPONENT_NAME}_${TEST_NAME}
+    COMMAND ${DOTNET_EXECUTABLE} test --no-build -c $<CONFIG>
+    WORKING_DIRECTORY ${DOTNET_TEST_DIR})
+
   message(STATUS "Configuring test ${FILE_NAME}: ...DONE")
 endfunction()
 
 ####################
-##  .Net Example  ##
+##  .Net Tests    ##
 ####################
-function(add_dotnet_example FILE_NAME)
-  message(STATUS "Configuring example ${FILE_NAME}: ...")
-  get_filename_component(EXAMPLE_NAME ${FILE_NAME} NAME_WE)
-  get_filename_component(COMPONENT_DIR ${FILE_NAME} DIRECTORY)
-  get_filename_component(COMPONENT_NAME ${COMPONENT_DIR} NAME)
-
-  set(DOTNET_EXAMPLE_DIR ${PROJECT_BINARY_DIR}/dotnet/${COMPONENT_NAME}/${EXAMPLE_NAME})
-  message(STATUS "build path: ${DOTNET_EXAMPLE_DIR}")
-
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/dotnet/Example.csproj.in
-    ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.csproj
-    @ONLY)
-
-  add_custom_command(
-    OUTPUT ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.cs
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${DOTNET_EXAMPLE_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${FILE_NAME}
-      ${DOTNET_EXAMPLE_DIR}/
-    MAIN_DEPENDENCY ${FILE_NAME}
-    VERBATIM
-    WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
-
-  add_custom_command(
-    OUTPUT ${DOTNET_EXAMPLE_DIR}/timestamp
-    COMMAND ${DOTNET_EXECUTABLE} build -c $<CONFIG>
-    COMMAND ${DOTNET_EXECUTABLE} pack -c $<CONFIG>
-    COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_EXAMPLE_DIR}/timestamp
-    DEPENDS
-      ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.csproj
-      ${DOTNET_EXAMPLE_DIR}/${EXAMPLE_NAME}.cs
-      dotnet_package
-    BYPRODUCTS
-      ${DOTNET_EXAMPLE_DIR}/bin
-      ${DOTNET_EXAMPLE_DIR}/obj
-      COMMENT "Compiling .Net ${COMPONENT_NAME}/${EXAMPLE_NAME}.cs (${DOTNET_EXAMPLE_DIR}/timestamp)"
-    WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
-
-  add_custom_target(dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME} ALL
-    DEPENDS
-      ${DOTNET_EXAMPLE_DIR}/timestamp
-    WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
-
-  if(BUILD_TESTING)
-    add_test(
-      NAME dotnet_${COMPONENT_NAME}_${EXAMPLE_NAME}
-      COMMAND ${DOTNET_EXECUTABLE} run --no-build --framework net6.0 -c $<CONFIG>
-      WORKING_DIRECTORY ${DOTNET_EXAMPLE_DIR})
-  endif()
-  message(STATUS "Configuring example ${FILE_NAME}: ...DONE")
-endfunction()
+add_subdirectory(tests)

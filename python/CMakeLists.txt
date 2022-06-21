@@ -1,11 +1,11 @@
+# Find Python 3
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+message(STATUS "Python path:${Python3_EXECUTABLE}")
+
 set(PYTHON_PROJECT CrossPlatformApi)
 message(STATUS "Python project: ${PYTHON_PROJECT}")
 set(PYTHON_PROJECT_DIR ${PROJECT_BINARY_DIR}/python/${PYTHON_PROJECT})
 message(STATUS "Python project build path: ${PYTHON_PROJECT_DIR}")
-
-# Find Python 3
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-message(STATUS "Python path:${Python3_EXECUTABLE}")
 
 # Find if the python module is available,
 # otherwise install it (PACKAGE_NAME) to the Python3 user install directory.
@@ -93,9 +93,7 @@ endif()
 #######################
 ## Set Swig flag      #
 #######################
-
 set(CMAKE_SWIG_FLAGS)
-
 if(${SWIG_VERSION} VERSION_GREATER_EQUAL 4)
   list(APPEND CMAKE_SWIG_FLAGS "-doxygen")
 endif()

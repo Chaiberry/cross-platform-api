@@ -1,0 +1,5 @@
+set(DOTNET_SUB_MODULES Sample)
+foreach(SUBPROJECT IN ITEMS ${DOTNET_SUB_MODULES})
+  add_subdirectory(${SUBPROJECT})
+  target_link_libraries(${NATIVE_LIBRARY_NAME} PRIVATE dotnet_${SUBPROJECT})
+endforeach()
