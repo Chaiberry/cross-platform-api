@@ -10,12 +10,12 @@ swig_add_library(dotnet_Sample
   SOURCES Sample.i)
 
 set_target_properties(dotnet_Sample PROPERTIES
-  SWIG_INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/dotnet
+  SWIG_INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/binding/dotnet
   SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
   POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(dotnet_Sample
   PRIVATE 
-  ../include)
+  ${PROJECT_SOURCE_DIR}/modules/Sample/include)
 
 target_link_libraries(dotnet_Sample PRIVATE ${PROJECT_NAMESPACE}::Sample)

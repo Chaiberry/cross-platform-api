@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+    <RuntimeIdentifier>@RUNTIME_IDENTIFIER@</RuntimeIdentifier>
+    <AssemblyName>@PROJECT_GROUP_ID@-@PROJECT_ARTIFACT_ID@-native</AssemblyName>
+    <Version>@PROJECT_VERSION@</Version>
+
+    <!-- Nuget Properties -->
+    <Description>.NET native wrapper for the @PROJECT_NAME@ project</Description>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+
+    <!-- Pack Option -->
+    <Title>@DOTNET@ @RUNTIME_IDENTIFIER@ v@PROJECT_VERSION@</Title>
+    <PackageId>@DOTNET_NATIVE_PROJECT@</PackageId>
+
+    <!-- Signing -->
+    <SignAssembly>false</SignAssembly>
+    <PublicSign>false</PublicSign>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Native library must be in native directory... -->
+    <Content Include="$<TARGET_FILE:Sample>">
+      <PackagePath>runtimes/@RUNTIME_IDENTIFIER@/native/%(Filename)%(Extension)</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$<TARGET_FILE:@PROJECT_GROUP_ID@-@PROJECT_ARTIFACT_ID@-native>">
+      <PackagePath>runtimes/@RUNTIME_IDENTIFIER@/native/%(Filename)%(Extension)</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

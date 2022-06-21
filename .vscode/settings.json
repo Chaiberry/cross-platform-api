@@ -1,7 +1,8 @@
 {
     "cmake.configureArgs": [
            "-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake",
-           "-DBUILD_PYTHON=ON"
+           "-DBUILD_PYTHON=ON",
+           "-DBUILD_DOTNET=ON",
     ],
     "cmake.configureOnOpen": true,
 }

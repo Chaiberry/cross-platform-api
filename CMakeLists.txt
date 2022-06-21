@@ -8,10 +8,10 @@ set(VER_STRING "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}")
 project(CrossPlatformApi VERSION ${VER_STRING} LANGUAGES C CXX)
 message(STATUS "${PROJECT_NAME} version: ${PROJECT_VERSION} with CMake ${CMAKE_VERSION}")
 
-set(PROJECT_GROUP_ID chaiberry.github.com)
-set(PROJECT_ARTIFACT_ID CrossPlatformApi)
+set(PROJECT_GROUP_ID ChaiBerry)
+set(PROJECT_ARTIFACT_ID ${PROJECT_NAME})
 
-set(PROJECT_NAMESPACE CrossPlatformApi)
+set(PROJECT_NAMESPACE ${PROJECT_NAME})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -42,16 +42,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
 # for multi-config builds (e.g. msvc)
 foreach(OutputConfig IN LISTS CMAKE_CONFIGURATION_TYPES)
-    string(TOLOWER ${OutputConfig} OUTPUTCONFIG)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_LIBDIR})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_LIBDIR})
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
+  string(TOLOWER ${OutputConfig} OUTPUTCONFIG)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_LIBDIR})
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_LIBDIR})
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
 endforeach()
 
 # CMake policies
 cmake_policy(SET CMP0078 NEW)
 cmake_policy(SET CMP0079 NEW)
 cmake_policy(SET CMP0086 NEW)
+cmake_policy(SET CMP0122 NEW)
 
 # CMake options
 option(BUILD_DOTNET "Build .NET Library" OFF)
@@ -66,18 +67,6 @@ option(BUILD_TESTING "Build tests" ON)
 
 PrintProjectSettings()
 
-if(BUILD_PYTHON)
-  include(Python)
-endif()
-
-if(BUILD_DOTNET)
-  include(Dotnet)
-endif()
-
-if(BUILD_JAVA)
-  include(Java)
-endif()
-
 # Enable testing
 enable_testing()
 
@@ -90,6 +79,16 @@ include(CompilerFlags)
 # Include directories
 add_subdirectory(modules)
 
-# package
-add_subdirectory(binding)
+# Need swig to build Python/Dotnet/Java
+find_package(SWIG REQUIRED)
+include(UseSWIG)
 
+# Python
+if (BUILD_PYTHON)
+  add_subdirectory(python)
+endif()
+
+# Dotnet
+if (BUILD_DOTNET)
+  add_subdirectory(dotnet)
+endif()
