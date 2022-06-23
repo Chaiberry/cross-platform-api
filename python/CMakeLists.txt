@@ -114,8 +114,8 @@ add_subdirectory(src)
 #######################
 
 file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/__init__.py CONTENT "__version__ = \"${PROJECT_VERSION}\"\n")
-foreach(SUBPROJECT IN ITEMS ${PYTHON_SUB_MODULES})
-  file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/${SUBPROJECT}/__init__.py CONTENT "")
+foreach(SUBMODULE IN ITEMS ${PYTHON_SUB_MODULES})
+  file(GENERATE OUTPUT ${PYTHON_PROJECT_DIR}/${SUBMODULE}/__init__.py CONTENT "")
 endforeach()
 
 # setup.py.in contains cmake variable e.g. @PYTHON_PROJECT@ and

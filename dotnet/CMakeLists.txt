@@ -47,11 +47,15 @@ elseif(UNIX)
   set_target_properties(${NATIVE_LIBRARY_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
 endif()
 
-list(APPEND CMAKE_SWIG_FLAGS ${FLAGS} "-I${PROJECT_SOURCE_DIR}")
+########################
+# Will need swig       #
+########################
+set(CMAKE_SWIG_FLAGS)
+list(APPEND CMAKE_SWIG_FLAGS "-I${PROJECT_SOURCE_DIR}")
 
-#######################
-## Dotnet sub modules #
-#######################
+########################
+## Dotnet sub projects #
+########################
 add_subdirectory(src)
 
 file(COPY ${PROJECT_SOURCE_DIR}/dotnet/logo.png DESTINATION ${PROJECT_BINARY_DIR}/dotnet)
@@ -131,6 +135,9 @@ add_custom_target(dotnet_package ALL
     ${DOTNET_PROJECT_DIR}/timestamp
   WORKING_DIRECTORY ${DOTNET_PROJECT_DIR})
 
+##########################
+##  .Net Tests utils    ##
+##########################
 function(add_dotnet_test FILE_NAME)
   message(STATUS "Configuring test ${FILE_NAME}: ...")
   get_filename_component(TEST_NAME ${FILE_NAME} NAME_WE)

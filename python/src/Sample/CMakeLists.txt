@@ -11,7 +11,7 @@ add_library(${PROJECT_NAMESPACE}::pySample ALIAS pySample)
 
 target_include_directories(pySample
   PRIVATE 
-  ${PROJECT_SOURCE_DIR}/modules/Sample/include
+  ${PROJECT_SOURCE_DIR}/cpp/Sample/include
   ${Python3_INCLUDE_DIRS}
   )
 

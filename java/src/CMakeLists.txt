@@ -1,0 +1,5 @@
+set(JAVA_SUB_MODULES Sample)
+foreach(SUBMODULE IN ITEMS ${JAVA_SUB_MODULES})
+  add_subdirectory(${SUBMODULE})
+  target_link_libraries(jni${JAVA_ARTIFACT} PRIVATE jni${SUBMODULE})
+endforeach()

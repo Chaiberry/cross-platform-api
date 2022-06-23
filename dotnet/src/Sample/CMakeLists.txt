@@ -14,8 +14,6 @@ set_target_properties(dotnet_Sample PROPERTIES
   SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
   POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(dotnet_Sample
-  PRIVATE 
-  ${PROJECT_SOURCE_DIR}/modules/Sample/include)
+target_include_directories(dotnet_Sample PRIVATE ${PROJECT_SOURCE_DIR}/cpp/Sample/include)
 
 target_link_libraries(dotnet_Sample PRIVATE ${PROJECT_NAMESPACE}::Sample)

@@ -67,6 +67,10 @@ option(BUILD_TESTING "Build tests" ON)
 
 PrintProjectSettings()
 
+# Need swig to build Python/Dotnet/Java
+find_package(SWIG REQUIRED)
+include(UseSWIG)
+
 # Enable testing
 enable_testing()
 
@@ -77,11 +81,7 @@ enable_testing()
 include(CompilerFlags)
 
 # Include directories
-add_subdirectory(modules)
-
-# Need swig to build Python/Dotnet/Java
-find_package(SWIG REQUIRED)
-include(UseSWIG)
+add_subdirectory(cpp)
 
 # Python
 if (BUILD_PYTHON)
@@ -91,4 +91,9 @@ endif()
 # Dotnet
 if (BUILD_DOTNET)
   add_subdirectory(dotnet)
+endif()
+
+# Java
+if (BUILD_JAVA)
+  add_subdirectory(java)
 endif()
