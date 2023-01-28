@@ -12,8 +12,8 @@ class Builder
     [String]$BuildDir
     [String[]]$BuildParams
 
-    [String]$MultiConfig
-    [Switch]$BuildPython = $True
+    [Boolean]$MultiConfig
+    [Switch]$BuildPython = $False
     [Switch]$BuildDotnet = $False
     [Switch]$BuildJava = $False
     
@@ -39,14 +39,9 @@ class Builder
 
         $Config = $this.TargetConfig
         $Root = $this.RootDir
-        if ($Config -eq ""){
-            $this.BuildDir = "$Root/build/$Triplet"
-        }
-        else{
-            $this.BuildDir = "$Root/build/$Triplet-$Config"
-        }
+        $this.BuildDir = "$Root/build/$Triplet"
     
-        $this.BuildParams = @("-S", ".", "-B", $this.BuildDir)
+        $this.BuildParams = @("-S", $this.RootDir, "-B", $this.BuildDir)
         if ($this.BuildPython) {$this.BuildParams += "-DBUILD_PYTHON=ON"}
         if ($this.BuildDotnet) {$this.BuildParams += "-DBUILD_DOTNET=ON"}
         if ($this.BuildJava) {$this.BuildParams += "-DBUILD_JAVA=ON"}
@@ -58,43 +53,28 @@ class Builder
     [void] SetupBuild()
     {  
         # Start building section
-        Push-Location $this.RootDir
-        try
-        {
-            Write-Host "Setting up dependencies for $($this.TargetTriplet)"
-            $vcpkgScript = Join-Path $this.RootDir "scripts/vcpkg.ps1"
-            . $vcpkgScript -TargetTriplet $this.TargetTriplet
+        Write-Host "Setting up dependencies for $($this.TargetTriplet)"
+        $vcpkgScript = Join-Path $this.RootDir "scripts/vcpkg.ps1"
+        . $vcpkgScript -TargetTriplet $this.TargetTriplet
 
-            $Triplet = $this.TargetTriplet
-            Write-Host "Setting up build for $Triplet ..."
-            Write-Host "cmake $($this.BuildParams)"
-
-            & cmake $this.BuildParams | Write-Host
-        }
-        finally
-        {
-            Pop-Location  
-        }
+        $Triplet = $this.TargetTriplet
+        Write-Host "Setting up build for $Triplet ..."
+        Write-Host "cmake $($this.BuildParams)"
+        & cmake $this.BuildParams | Write-Host
     }
 
     [void] Build()
     {  
         # Start building section
-        Push-Location $this.RootDir
-        try
-        {
-            if ($this.MultiConfig){
-                $Config = $this.TargetConfig
-                if ($Config -eq "") { $Config = "Release" }
-                & cmake --build $this.BuildDir --config $Config | Write-Host
-            }
-            else{
-                & cmake --build $this.BuildDir | Write-Host
-            }
+        if ($this.MultiConfig){
+            $Config = $this.TargetConfig
+            if ($Config -eq "") { $Config = "Debug" }
+            Write-Host "MultiConfig: cmake --build $($this.BuildDir) --config $Config"
+            & cmake --build $this.BuildDir --config $Config | Write-Host
         }
-        finally
-        {
-            Pop-Location  
+        else{
+            Write-Host "SingleConfig: cmake --build $($this.BuildDir)"
+            & cmake --build $this.BuildDir | Write-Host
         }
     }
 }
@@ -199,18 +179,21 @@ class WindowsBuilder : Builder
         $Generator = $this.TargetGenerator
         if($Generator -eq ""){
             # Use default Visual Studio generator 
-            $this.BuildParams += @("-DCMAKE_CONFIGURATION_TYPES=$Config")
+            $this.BuildParams += @("-DCMAKE_CONFIGURATION_TYPES=Debug;Release")
             $this.BuildParams += @("-A", $Arch)
+            $this.MultiConfig = $True
         }
         else{
             $this.BuildParams += @("-G", $Generator)
- 
             if ($Generator -ieq "Visual Studio 16 2019" -Or $Generator -ieq "Visual Studio 17 2022"){
-                if (-Not $Config -eq ""){ $this.BuildParams += @("-DCMAKE_CONFIGURATION_TYPES=$Config") }
+                if (-Not $Config -eq ""){ $this.BuildParams += @("-DCMAKE_CONFIGURATION_TYPES=Debug;Release") }
                 $this.BuildParams += @("-A", $Arch)
                 $this.MultiConfig = $True
             }
             else{
+                $Triplet = $this.TargetTriplet
+                $Root = $this.RootDir
+                $this.BuildDir = "$Root/build/$Triplet"
                 if (-Not $Config -eq ""){ $this.BuildParams += @("-DCMAKE_BUILD_TYPE=$Config") }
             }
         } 

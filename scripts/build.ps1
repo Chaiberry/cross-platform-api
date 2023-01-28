@@ -3,7 +3,8 @@ param(
     [String]$Platform="",
     [String][ValidateSet("", "Debug", "Release")]$Config="",
     [String]$Generator="",
-    [Switch]$CmakeOnly=$False
+    [Switch]$SkipConfig=$False,
+    [Switch]$SkipBuild=$False
 )
 
 . $PSScriptRoot/utilities.ps1 
@@ -40,8 +41,6 @@ elseif($TargetPlatform -eq "ios-sim"){
 }
 
 $builder.PrepareBuildSetings()
-$builder.SetupBuild()
 
-if (-Not $CmakeOnly) {
-    $builder.Build()
-}
+if (-Not $SkipConfig) { $builder.SetupBuild() }
+if (-Not $SkipBuild) { $builder.Build() }
